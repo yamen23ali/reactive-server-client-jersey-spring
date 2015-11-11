@@ -1,0 +1,73 @@
+package com.example;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.glassfish.jersey.client.rx.Rx;
+import org.glassfish.jersey.client.rx.rxjava.RxObservable;
+import org.glassfish.jersey.client.rx.rxjava.RxObservableInvoker;
+
+import rx.Observable;
+import rx.Observable.OnSubscribe;
+import rx.Observer;
+import rx.Scheduler;
+import rx.Subscriber;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
+
+public class AsynCalls 
+{
+
+    private String URL = "http://localhost:8005";
+    private String path = "/api/server?test=11";
+    
+    WebTarget webTarget; 
+    
+    public AsynCalls()
+    {
+    	Client client = ClientBuilder.newClient();
+    	webTarget = client.target( URL ).path( path ); 
+    }
+    
+    public void makeCall()
+    {
+    	/*Observable<Response> result = RxObservable.from (webTarget ).path("recommended").request()
+    	        .header("Rx-User", "RxJava")
+    	        .rx()
+    	        .get();*./
+    	/*Observable<Response> result =  RxObservable.newClient(RxObservableInvoker.class)
+        .target("http://localhost:8005/api/server?test=11")
+        .request()
+        .rx()
+        .get(  );*/
+    	
+    	
+    	Observable.create( new OnSubscribe<String>() {
+
+			@Override
+			public void call(Subscriber<? super String> arg0) {
+				// TODO Auto-generated method stub
+				Response test = webTarget.request().accept( MediaType.TEXT_PLAIN ).get();
+				arg0.onNext( test.toString());
+			}
+		}).subscribe(new Action1<String>() {
+    	    @Override
+    	    public void call(String integer) {
+    	        System.out.println("Got: " + integer);
+    	    }
+    	}) ; 	
+    	
+    	
+    	
+    	
+    }
+    
+    private Observable<Response> ff( Observable<Response> t)
+    {
+    	return t;
+    }
+    
+}

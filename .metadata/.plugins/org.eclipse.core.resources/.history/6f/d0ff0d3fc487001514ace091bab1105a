@@ -1,0 +1,30 @@
+package com.example.configuration;
+
+import java.util.Arrays;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.ws.rs.ApplicationPath;
+
+import org.glassfish.jersey.server.ResourceConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.zlounge.phoenix.stock.stock.RestStockException;
+import org.zlounge.phoenix.stock.stock.StockEndpoint;
+
+import io.swagger.jaxrs.listing.ApiListingResource;
+import io.swagger.jaxrs.listing.SwaggerSerializers;
+
+@Configuration
+@ApplicationPath( "/api" )
+public class RestServerConfig
+    extends ResourceConfig
+{
+    @PostConstruct
+    public void init()
+    {
+        register(StockEndpoint.class);
+        register(RestStockException.class);
+    }
+}

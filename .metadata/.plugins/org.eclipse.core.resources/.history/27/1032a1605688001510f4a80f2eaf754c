@@ -1,0 +1,31 @@
+package com.example.endpoints;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+
+import org.springframework.stereotype.Component;
+
+import javax.ws.rs.container.AsyncResponse;
+import javax.ws.rs.container.Suspended;
+
+
+@Component
+@Path( "" )
+public class StockEndpoint
+{
+
+    @Path( "/server" )
+    @GET
+    @Produces( "text/plain" )
+    public void stockBySimpleSku( @Suspended final AsyncResponse async,
+    		@QueryParam( value = "test" ) String test ) throws InterruptedException
+    {
+    	System.out.println( test );
+    	
+    	Thread.sleep( 5000 );
+    	
+    	async.resume("hello from the other side");
+    }
+}

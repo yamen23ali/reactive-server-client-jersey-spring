@@ -1,0 +1,43 @@
+package com.example;
+
+import java.util.Observable;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+
+public class AsynCalls 
+{
+
+    private String URL = "http://localhost:8005";
+    private String path = "/api/t/server?test=11";
+    
+    WebTarget webTarget; 
+    
+    public AsynCalls()
+    {
+    	Client client = ClientBuilder.newClient();
+    	webTarget = client.target( URL ).path( path ); 
+    }
+    
+    public void makeCall()
+    {
+    	Observable<String> recommended = RxObservable.from(destination).path("recommended").request()
+    	        // Identify the user.
+    	        .header("Rx-User", "RxJava")
+    	        // Reactive invoker.
+    	        .rx()
+    	        // Return a list of destinations.
+    	        .get(new GenericType<List<Destination>>() {})
+    	        // Handle Errors.
+    	        .onErrorReturn(throwable -> {
+    	            errors.offer("Recommended: " + throwable.getMessage());
+    	            return Collections.emptyList();
+    	        })
+    	        // Emit destinations one-by-one.
+    	        .flatMap(Observable::from)
+    	        // Remember emitted items for dependant requests.
+    	        .cache();
+    }
+    
+}

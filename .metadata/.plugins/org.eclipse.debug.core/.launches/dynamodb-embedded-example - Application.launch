@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.springframework.ide.eclipse.boot.launch">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/dynamodb-embedded-example/src/main/java/example/Application.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<mapAttribute key="org.eclipse.debug.core.environmentVariables">
+<mapEntry key="test" value="tyyy"/>
+</mapAttribute>
+<booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="example.Application"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="dynamodb-embedded-example"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Djava.security.egd=file:/dev/./urandom &#10;-Dsqlite4java.library.path=${system_property:sqlite4java.library.path}"/>
+<stringAttribute key="process_factory_id" value="org.springframework.ide.eclipse.boot.launch.process.BootProcessFactory"/>
+<booleanAttribute key="spring.boot.debug.enable" value="false"/>
+<booleanAttribute key="spring.boot.lifecycle.enable" value="true"/>
+<booleanAttribute key="spring.boot.livebean.enable" value="true"/>
+<stringAttribute key="spring.boot.livebean.port" value="36622"/>
+<stringAttribute key="spring.boot.profile" value=""/>
+</launchConfiguration>

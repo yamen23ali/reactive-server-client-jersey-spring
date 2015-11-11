@@ -1,0 +1,19 @@
+package com.example;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import com.example.utils.AsynCalls;
+
+@SpringBootApplication
+public class ReactiveClientApplication {
+
+    public static void main(String[] args) 
+    {
+        SpringApplication.run(ReactiveClientApplication.class, args);
+        
+        AsynCalls caller = new AsynCalls();
+        caller.makeCall( "test");
+        caller.makeCall( "heloo");
+    }
+}

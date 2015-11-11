@@ -1,0 +1,21 @@
+package com.example.configuration;
+
+import javax.annotation.PostConstruct;
+import javax.ws.rs.ApplicationPath;
+
+import org.glassfish.jersey.server.ResourceConfig;
+import org.springframework.context.annotation.Configuration;
+
+import com.example.endpoints.StockEndpoint;
+
+@Configuration
+@ApplicationPath( "/api" )
+public class RestServerConfig
+    extends ResourceConfig
+{
+    @PostConstruct
+    public void init()
+    {
+        register(StockEndpoint.class);
+    }
+}

@@ -1,0 +1,114 @@
+package com.example.utils;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.glassfish.jersey.client.rx.Rx;
+import org.glassfish.jersey.client.rx.rxjava.RxObservable;
+import org.glassfish.jersey.client.rx.rxjava.RxObservableInvoker;
+
+import rx.Observable;
+import rx.Observable.OnSubscribe;
+import rx.Observer;
+import rx.Scheduler;
+import rx.Subscriber;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
+
+public class MySubscriber 
+{
+
+    private String URL = "http://localhost:8005";
+    private String path = "/api/server";
+    
+    WebTarget webTarget; 
+    
+    public MySubscriber()
+    {
+    	Client client = ClientBuilder.newClient();
+    	webTarget = client.target( URL ).path( path ); 
+    }
+    
+    public void makeCall( String body )
+    {
+    	Observable<Response> result = RxObservable.from (webTarget ).queryParam("test", body).request()
+    	        .header("Heheh", "hahah")
+    	        .rx()
+    	        .get();
+    	
+    	System.out.println(Thread.currentThread().getName() );
+    	
+    	result.subscribeOn( Schedulers.io() );
+    	
+    	result.subscribe( new Subscriber() {
+
+			@Override
+			public void onCompleted() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onError(Throwable arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onNext(Object arg0) {
+				// TODO Auto-generated method stub
+				Response resp = (Response)arg0;
+				
+				System.out.println( resp.readEntity( String.class) );
+				System.out.println(Thread.currentThread().getName() );
+				
+				
+			}
+		});
+    	
+    	System.out.println( "after ");
+    	/*RxObservable.newClient()
+        .target("http://localhost:8005/api/server")
+        .request()
+        .rx()
+        .get().subscribe(new Action1<Response>() {
+    	    @Override
+    	    public void call(Response integer) {
+    	        System.out.println("Got: " + integer);
+    	    }
+    	});*/
+    	
+    	
+    	
+    	
+    	
+    }
+    
+    public void makeCall1(){
+    	Observable.create( new OnSubscribe<String>() {
+
+			@Override
+			public void call(Subscriber<? super String> arg0) {
+				// TODO Auto-generated method stub
+				Response test = webTarget.request().accept( MediaType.TEXT_PLAIN ).get();
+				arg0.onNext( test.toString());
+			}
+		}).subscribe(new Action1<String>() {
+    	    @Override
+    	    public void call(String integer) {
+    	        System.out.println("Got: " + integer);
+    	    }
+    	}) ; 	
+    	
+    	
+    }
+    
+    private Observable<Response> ff( Observable<Response> t)
+    {
+    	return t;
+    }
+    
+}

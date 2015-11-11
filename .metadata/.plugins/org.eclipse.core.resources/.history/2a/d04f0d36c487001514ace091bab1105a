@@ -1,0 +1,129 @@
+package org.zlounge.phoenix.stock.stock;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
+import java.util.List;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.zlounge.phoenix.shared.stock.SimpleStock;
+import org.zlounge.phoenix.shared.stock.StockException;
+import org.zlounge.phoenix.shared.stock.StockService;
+
+@Component
+@Path( "" )
+@Api( value = "Stock", description = "Provide information about Stock, readonly" )
+public class StockEndpoint
+{
+    protected final Logger logger = LogManager.getLogger( getClass() );
+
+    @Autowired
+    StockService stockService;
+
+    /*
+     * @Autowired StockUpdateService stockUpdateService;
+     */
+
+    @Value( "${lounge.appdomainid:17}" )
+    Integer appDomainId;
+
+    @Path( "/stocks/{simpleSku}" )
+    @GET
+    @Produces( "application/json" )
+    @ApiOperation( value = "SimpleStock for a simpleSku", notes = "One SimpleStock for one simpleSku", response = SimpleStock.class )
+    @ApiResponses( value = {
+        @ApiResponse( code = 200, message = "Successful retrieval of stocks", response = SimpleStock.class ),
+        @ApiResponse( code = 404, message = "no SimpleStocks found for configSku" ) } )
+    public SimpleStock stockBySimpleSku( @PathParam( value = "simpleSku" ) String simpleSku )
+        throws StockException
+    {
+        SimpleStock simpleStock = this.stockService.stockBySimpleSku( simpleSku );
+
+        logger.debug( "Stock found for simpleSku: " + simpleSku + " " + simpleStock );
+        return simpleStock;
+    }
+
+    @Path( "/stocks" )
+    @POST
+    @Consumes( "application/json" )
+    @ApiOperation( value = "SimpleStock for simpleSkus", notes = "SimpleStock for multiple simpleSku", response = SimpleStock[].class )
+    @ApiResponses( value = {
+        @ApiResponse( code = 200, message = "Successful retrieval of stocks", response = SimpleStock[].class ),
+        @ApiResponse( code = 404, message = "no SimpleStocks found for configSku" ) } )
+    public List<SimpleStock> stockBySimpleSkus( @RequestParam List<String> simpleSkus )
+        throws StockException
+    {
+        List<SimpleStock> simpleStocks = this.stockService.stockBySimpleSkus( simpleSkus );
+
+        return simpleStocks;
+    }
+
+    @Path( "/stocks/{simpleSku}/reserve/{quantity}" )
+    @GET
+    @Produces( "application/json" )
+    @ApiOperation( value = "Increment reserved counter for a simpleSku", notes = "Reserved can not be more than quantity - ordered", response = Long.class )
+    @ApiResponses( value = {
+        @ApiResponse( code = 200, message = "Successful increment of stocks", response = SimpleStock.class ),
+        @ApiResponse( code = 404, message = "no SimpleStocks found for simpleSku" ) } )
+    public SimpleStock incrementReserved( @PathParam( value = "simpleSku" ) String simpleSku,
+                                          @PathParam( value = "quantity" ) Integer quantity )
+        throws StockException
+    {
+        if ( quantity == null )
+        {
+            throw new StockException( "Quantity is a required path parameter.", StockException.MISSING_ARGUMENT );
+        }
+
+        SimpleStock stock = this.stockService.reserveSimpleStock( simpleSku, quantity );
+        logger.debug( "Incremented reserved counter for simpleSku: " + simpleSku + " newReservedCount: "
+            + stock.getReserved() );
+        return stock;
+    }
+
+    @Path( "/stocks/{simpleSku}/release" )
+    @GET
+    @Produces( "application/json" )
+    @ApiOperation( value = "Decrement reserved counter for a simpleSku", notes = "Reserved can not be less than zero", response = Long.class )
+    @ApiResponses( value = {
+        @ApiResponse( code = 200, message = "Successful decrement of stocks", response = Long.class ),
+        @ApiResponse( code = 404, message = "no SimpleStocks found for simpleSku" ) } )
+    public SimpleStock decrementReserved( @PathParam( value = "simpleSku" ) String simpleSku )
+        throws StockException
+    {
+        SimpleStock stock = this.stockService.releaseSimpleStock( simpleSku );
+
+        logger.debug( "Decremented reserved counter for simpleSku: " + simpleSku + " newReservedCount: " + stock );
+        return stock;
+    }
+
+    @Path( "/stocks/{simpleSku}/order" )
+    @PUT
+    @Produces( "application/json" )
+    @ApiOperation( value = "Decrement reserved counter for a simpleSku AND increment the ordered counter" )
+    @ApiResponses( value = { @ApiResponse( code = 200, message = "Successful order of stocks" ),
+        @ApiResponse( code = 404, message = "no SimpleStocks found for simpleSku" ) } )
+    public Response orderItems( @PathParam( value = "simpleSku" ) String simpleSku)
+        throws StockException
+    {
+        this.stockService.orderItem( simpleSku );
+
+        logger.debug( "Order items for simpleSkus: " + simpleSku );
+        return Response.noContent().build();
+    }
+}

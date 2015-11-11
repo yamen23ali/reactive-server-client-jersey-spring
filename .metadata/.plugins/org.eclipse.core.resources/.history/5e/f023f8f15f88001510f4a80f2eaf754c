@@ -1,0 +1,22 @@
+package com.example.utils;
+
+import rx.Observable.OnSubscribe;
+import rx.Subscriber;
+
+public class MyObservable<T> implements OnSubscribe<T>
+{
+	String param = "";
+	
+	public MyObservable( String param ) 
+	{
+		this.param = param;
+	}
+	
+	@Override
+	public void call( Subscriber<? super T> observer ) 
+	{
+		// TODO Auto-generated method stub
+		observer.onNext( (T) param  );
+		observer.onCompleted();
+	}
+}

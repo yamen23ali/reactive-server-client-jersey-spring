@@ -1,0 +1,45 @@
+package com.example;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
+
+import org.glassfish.jersey.client.rx.Rx;
+import org.glassfish.jersey.client.rx.rxjava.RxObservable;
+import org.glassfish.jersey.client.rx.rxjava.RxObservableInvoker;
+
+import rx.Observable;
+import rx.functions.Action0;
+import rx.functions.Func1;
+
+public class AsynCalls 
+{
+
+    private String URL = "http://localhost:8005";
+    private String path = "/api/server?test=11";
+    
+    WebTarget webTarget; 
+    
+    public AsynCalls()
+    {
+    	Client client = ClientBuilder.newClient();
+    	webTarget = client.target( URL ).path( path ); 
+    }
+    
+    public void makeCall()
+    {
+    	/*Observable<Response> result = RxObservable.from (webTarget ).path("recommended").request()
+    	        .header("Rx-User", "RxJava")
+    	        .rx()
+    	        .get();*/
+    	Observable<String> result =  Rx.newClient(RxObservableInvoker.class)
+        .target("http://localhost:8005/api/server?test=11")
+        .request()
+        .rx()
+        .get( String.class );
+    	    	
+    	System.out.println( result.toBlocking().first() );
+    }
+    
+}

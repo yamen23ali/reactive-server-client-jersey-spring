@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/aws-dynamodb-examples/src/test/java/com/amazonaws/services/dynamodbv2/DynamoDBLocalFixture.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="com.amazonaws.services.dynamodbv2.DynamoDBLocalFixture"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="aws-dynamodb-examples"/>
+</launchConfiguration>
